@@ -1,0 +1,37 @@
+{
+  "name": "seaschema2",
+  "version": "1.0.0",
+  "description": "SEALang Transpiler Schema version 2",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --experimental-modules test.mjs",
+    "test": "npx ava --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SEAProject/SEASchema2.git"
+  },
+  "keywords": [
+    "SEALang",
+    "perl"
+  ],
+  "author": "gentilhomme.thomas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SEAProject/SEASchema2/issues"
+  },
+  "homepage": "https://github.com/SEAProject/SEASchema2#readme",
+  "dependencies": {
+    "@sindresorhus/is": "^0.9.0",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/es6-shim": "^0.31.37",
+    "@types/node": "^10.1.3",
+    "ava": "^0.25.0",
+    "eslint": "^4.19.1",
+    "eslint-config-boostmyapps": "^1.1.5",
+    "minami": "^1.2.3",
+    "nyc": "^11.4.1"
+  }
+}
