@@ -4,6 +4,7 @@ const { writeFile } = require("fs").promises;
 
 // Require Internal Dependencies
 const Scope = require("./Scope.class");
+const Dependency = require("./Dependency.class");
 
 /**
  * @class File
@@ -14,19 +15,43 @@ class File {
      * @constructor
      * @param {!String} name name
      * @param {Object=} [options={}] File options
-     * @param {Boolean=} [options.isPerlModule=false] Establish if the file is a perl module or not
+     * @param {Boolean=} [options.module=false] Establish if the file is a perl module or not
+     * @param {Boolean=} [options.strict=true] Enable strict mode
      *
      * @throws {TypeError}
      */
-    constructor(name, options = {}) {
+    constructor(name, options = File.DefaultConstructorOptions) {
         if (typeof name !== "string") {
             throw new TypeError("name should be typeof string");
         }
+        // TODO: Ensure assignment of default options!
+
+        /** @type {Boolean} */
+        const isModule = options.module || false;
 
         this.name = name;
-        this.isPerlModule = options.isPerlModule || false;
+        this.fileExt = isModule ? "pm" : "pl";
+        this.dependencies = [];
+
         // TODO: Make it hidden!
         this.rootScope = new Scope();
+        if (options.strict === true) {
+            this.use(new Dependency("strict"));
+        }
+    }
+
+    /**
+     * @public
+     * @method use
+     * @param {!Dependency} dependency dependency to use
+     * @return {void}
+     */
+    use(dependency) {
+        if (dependency instanceof Dependency === false) {
+            throw new TypeError("dependency should be instanceof Dependency!");
+        }
+
+        this.dependencies.push(dependency);
     }
 
     /**
@@ -51,12 +76,18 @@ class File {
             throw new TypeError("location should be typeof string");
         }
 
-        const filePath = join(location, `${this.name}.${this.isPerlModule ? "pm" : "pl"}`);
-        const retStr = this.root.toString();
+        const filePath = join(location, `${this.name}.${this.fileExt}`);
+        const depStr = this.dependencies.map((dep) => dep.toString()).join("");
+        const retStr = `${depStr}\n${this.root.toString()}`;
         console.log(retStr);
         await writeFile(filePath, retStr);
     }
 
 }
+
+File.DefaultConstructorOptions = {
+    strict: true,
+    module: false
+};
 
 module.exports = File;

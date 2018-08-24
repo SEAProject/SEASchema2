@@ -26,6 +26,7 @@ class Variable {
             throw new TypeError("Invalid stdtype!");
         }
         this.isReference = false;
+        this.isShared = false;
         this.stdtype = stdtype;
         // TODO: Set it hidden
         this._value = null;
