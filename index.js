@@ -2,7 +2,7 @@
 const { join } = require("path");
 
 // Require Internal Dependencies
-const { File, Variable, Scope } = require("./src");
+const { File, Scope } = require("./src");
 const { Scalar, String } = require("./src/primitives");
 
 async function main() {
