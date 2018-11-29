@@ -2,24 +2,26 @@
 const { join } = require("path");
 
 // Require Internal Dependencies
-const { File, Scope } = require("./src");
+const { File, Scope, Dependency, Routine, Return } = require("./src");
 const { Scalar, String } = require("./src/primitives");
 
 async function main() {
-    const mpf = new File("test");
+    const perlFile = new File("test", {
+        strict: true,
+        module: false
+    });
+    perlFile.use(new Dependency("stdlib.string", ["isString"]));
 
-    const ScaTest = new Scalar("test", "hello world!");
-    mpf.root.add(ScaTest);
-    const refT = new Scalar("refT", ScaTest.referenceOf());
-    mpf.root.add(refT);
-    const StrBar = new String("bar", refT);
-    mpf.root.add(StrBar);
+    const handler = new Routine("handler");
+    const fun = new String("fun", "lol");
+    handler.add(fun);
+    handler.add(new Return(fun));
+    perlFile.root.add(handler);
+    const foo = new String("foo", handler);
+    perlFile.root.add(foo);
 
-    const subS = new Scope();
-    subS.add(new String("foo", "wahou!"));
-    mpf.root.add(subS);
-    console.log(`Scope has bar: ${subS.hasVariable("bar")}`);
-
-    await mpf.writeFileToDisk(join(__dirname, "./test"));
+    console.time("writeToDisk");
+    await perlFile.writeFileToDisk(join(__dirname, "./out"));
+    console.timeEnd("writeToDisk");
 }
 main().catch(console.error);

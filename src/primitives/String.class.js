@@ -1,6 +1,5 @@
 // Require Internal Dependencies
 const Variable = require("../Variable.class");
-const Scalar = require("./Scalar.class");
 
 /**
  * @class Scalar
@@ -17,7 +16,7 @@ class String extends Variable {
      */
     constructor(name, value) {
         super(name, "string");
-        if (value instanceof String || value instanceof Scalar || typeof value === "string") {
+        if (String.availableCastTypes.has(value.constructor.name) || typeof value === "string") {
             this.value = value;
         }
         else {
@@ -26,5 +25,7 @@ class String extends Variable {
     }
 
 }
+
+String.availableCastTypes = new Set(["String", "Scalar", "Routine"]);
 
 module.exports = String;

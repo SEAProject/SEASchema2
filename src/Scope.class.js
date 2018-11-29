@@ -1,3 +1,6 @@
+// Require Node Dependencies
+const events = require("events");
+
 // Require Internal Dependencies
 const Variable = require("./Variable.class");
 
@@ -6,13 +9,16 @@ const is = require("@sindresorhus/is");
 
 /**
  * @class Scope
+ * @extends events
  */
-class Scope {
+class Scope extends events {
 
     /**
      * @constructor
      */
     constructor() {
+        super();
+
         /** @type {Scope} */
         this.root = null;
         this.variables = new Map();
@@ -48,13 +54,19 @@ class Scope {
      * @returns {void}
      */
     add(element) {
-        const len = this.elements.push(element);
+        const index = this.elements.push(element) - 1;
+        const type = element.constructor.name;
         if (element instanceof Variable) {
-            this.variables.set(element.name, len - 1);
+            this.variables.set(element.name, index);
         }
         else if (element instanceof Scope) {
             element.root = this;
         }
+
+        // Emit new element!
+        this.emit("newElement", {
+            index, type
+        });
     }
 
     /**
@@ -66,20 +78,23 @@ class Scope {
     toString(indentation = 0) {
         const setupBracket = !is.nullOrUndefined(this.root);
         const spaces = indentation === 0 ? "" : " ".repeat(indentation);
+        const subSpaces = indentation === Scope.indentation ? "" : " ".repeat(indentation / 2);
         const strArr = [];
 
         for (const elem of this.elements) {
-            if (elem instanceof Scope) {
-                strArr.push(elem.toString(indentation + Scope.indentation));
+            if (Scope.indentedElements.has(elem.constructor.name)) {
+                strArr.push(spaces + elem.toString(indentation + Scope.indentation));
                 continue;
             }
             strArr.push(spaces + elem.toString());
         }
 
-        return setupBracket ? `{\n${strArr.join("")}};\n` : strArr.join("");
+        return setupBracket ? `{\n${strArr.join("")}${subSpaces}};\n` : strArr.join("");
     }
 
 }
+
+Scope.indentedElements = new Set(["Scope", "Routine"]);
 Scope.indentation = 4;
 
 module.exports = Scope;

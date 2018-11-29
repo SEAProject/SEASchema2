@@ -26,8 +26,11 @@ class Variable {
             throw new TypeError("Invalid stdtype!");
         }
         this.isReference = false;
+
+        // TODO: Add shared variable!
         this.isShared = false;
         this.stdtype = stdtype;
+
         // TODO: Set it hidden
         this._value = null;
     }
@@ -39,10 +42,19 @@ class Variable {
      * @desc Get the root scope!
      */
     set value(newValue) {
+        /** @type {String} */
         let fValue;
         if (newValue instanceof Variable) {
             // TODO: Retrieve the constructor name to render right reference
             fValue = newValue.isReference ? `$${newValue.valueOf()}` : newValue.valueOf();
+        }
+        else if (newValue.constructor.name === "Routine") {
+            if (!newValue.hasReturnStmt) {
+                fValue = "undef";
+            }
+            else {
+                fValue = `${newValue.name}()`;
+            }
         }
         else if (newValue instanceof Reference) {
             fValue = newValue.valueOf();
@@ -63,10 +75,10 @@ class Variable {
 
     /**
      * @public
-     * @method referenceOf
+     * @method ref
      * @returns {Reference}
      */
-    referenceOf() {
+    ref() {
         return new Reference(this);
     }
 

@@ -5,13 +5,13 @@ class Reference {
 
     /**
      * @constructor
-     * @param {!Variable} variable variable
+     * @param {!Variable} ref ref (variable, routine etc...)
      */
-    constructor(variable) {
-        if (!Reference.availablePrototype.has(variable.constructor.name)) {
+    constructor(ref) {
+        if (!Reference.availablePrototype.has(ref.constructor.name)) {
             throw new TypeError("invalid variable prototype name!");
         }
-        this.variable = variable;
+        this.ref = ref;
     }
 
     /**
@@ -20,10 +20,10 @@ class Reference {
      * @returns {String}
      */
     valueOf() {
-        return `\\${this.variable.valueOf()}`;
+        return `\\${this.ref.valueOf()}`;
     }
 
 }
-Reference.availablePrototype = new Set(["Scalar", "String"]);
+Reference.availablePrototype = new Set(["Scalar", "String", "Routine"]);
 
 module.exports = Reference;

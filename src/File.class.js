@@ -32,6 +32,8 @@ class File {
         this.name = name;
         this.fileExt = isModule ? "pm" : "pl";
         this.dependencies = [];
+        this.env = new Map();
+        this.constants = new Map();
 
         // TODO: Make it hidden!
         this.rootScope = new Scope();
